@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 15%;
+    }
+    
+    .slider {
+      width: 500px;
+      height: 300px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+      position: relative;
+    }
+
+    
+    .slider img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    
+    .slider .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 24px;
+      padding: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .slider .arrow:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .slider .prev-arrow {
+      left: 10px;
+    }
+
+    .slider .next-arrow {
+      right: 10px;
+    }
+    #word-display {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    button{
+      background-color: blue;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>slider project</h1>
+  <div class="slider">
+    <img src="media/car.jpeg" alt="Image 1">
+    <img src="media/b&wself.jpg" alt="Image 2">
+    <img src="media/laptop.jpg" alt="Image 3">
+    <img src="media/tsig.png" alt="Image 4">
+    <img src="media/keyboard.jpg" alt="Image 5">
+
+    <div class="arrow prev-arrow" onclick="previousImage()">&#10094;</div>
+    <div class="arrow next-arrow" onclick="nextImage()">&#10095;</div>
+  </div>
+  <h1>fruits hangman game project</h1>
+
+  <div id="word-display"></div>
+  <div id="guesses-remaining"></div>
+  <div id="letters-guessed"></div>
+  <input type="text" id="guess-input" placeholder="Enter a letter">
+  <button onclick="guessLetter()">tukka maro</button>
+
+  <script>
+    
+    let currentImageIndex = 0;
+    const images = document.querySelectorAll('.slider img');
+    const totalImages = images.length;
+
+    function showImage(index) {
+      images.forEach(image => {
+        image.style.display = 'none';
+      });
+
+      images[index].style.display = 'block';
+    }
+
+    function nextImage() {
+      currentImageIndex = (currentImageIndex + 1) % totalImages;
+      showImage(currentImageIndex);
+    }
+
+    function previousImage() {
+      currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
+      showImage(currentImageIndex);
+    }
+
+    
+    showImage(currentImageIndex);
+
+    //hangman
+
+    const fruits = ['apple',' banana' ,'mango', 'strawberry', 'orange', 'grape' ,'pineapple' ,'apricot' ,'lemon' ,'coconut' ,'watermelon' ,'cherry', 'papaya', 'berry', 'peach', 'lychee', 'muskmelon', 'kiwi','jackfruit', 'blueberry'];
+    let selectedWord = fruits[Math.floor(Math.random() * fruits.length)];
+    let guessedLetters = [];
+    let guessesRemaining = 3;
+    function displayWord() {
+      let wordDisplay = '';
+      for (let i = 0; i < selectedWord.length; i++) {
+        if (guessedLetters.includes(selectedWord[i])) {
+          wordDisplay += selectedWord[i];
+        } else {
+          wordDisplay += '_';
+        }
+        wordDisplay += ' ';
+      }
+      document.getElementById('word-display').textContent = wordDisplay;
+    }
+    function updateGuessesRemaining() {
+      document.getElementById('guesses-remaining').textContent = 'Guesses Remaining: ' + guessesRemaining;
+    }
+    function updateLettersGuessed() {
+      document.getElementById('letters-guessed').textContent = 'Letters Guessed: ' + guessedLetters.join(', ');
+    }
+    function checkWin() {
+      return selectedWord.split('').every(letter => guessedLetters.includes(letter));
+    }
+    function guessLetter() {
+      let guessInput = document.getElementById('guess-input');
+      let guess = guessInput.value.toLowerCase().trim();
+      guessInput.value = '';
+      if (guess.length !== 1 || !/[a-z]/.test(guess)) {
+        alert('Please enter a single letter!');
+        return;
+      }
+      if (guessedLetters.includes(guess)) {
+        alert('You have already guessed that letter!');
+        return;
+      }
+      guessedLetters.push(guess);
+      if (!selectedWord.includes(guess)) {
+        guessesRemaining--;
+      }
+      displayWord();
+      updateGuessesRemaining();
+      updateLettersGuessed();
+      if (checkWin()) {
+        alert('Congratulations! You won!');
+        resetGame();
+      } else if (guessesRemaining === 0) {
+        alert('Game over! The word was: ' + selectedWord);
+        resetGame();
+      }
+    }
+    function resetGame() {
+      selectedWord = fruits[Math.floor(Math.random() * fruits.length)];
+      guessedLetters = [];
+      guessesRemaining = 3;
+      displayWord();
+      updateGuessesRemaining();
+      updateLettersGuessed();
+    }
+    displayWord();
+    updateGuessesRemaining();
+    updateLettersGuessed();
+  </script>
+</body>
+</html>
